@@ -1,12 +1,12 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
-class User(models.Model):
-    username = models.CharField(max_length=64, unique=True)
-    email = models.EmailField(max_length=64, unique=True)
-    phone_number = models.CharField(max_length=64, unique=True)
-    password = models.CharField(max_length=64)
-    otp_code = models.CharField(max_length=64, default=None, unique=True, null=True)
+class User(AbstractUser):
+    username = models.CharField(max_length=200, unique=True)
+    email = models.EmailField(max_length=200, unique=True)
+    phone_number = models.CharField(max_length=200, unique=True)
+    password = models.CharField(max_length=200)
+    otp_code = models.CharField(max_length=200, default=None, unique=True, null=True)
     email_verified = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_superadmin = models.BooleanField(default=False)
@@ -18,8 +18,8 @@ class User(models.Model):
 
 class Receptionist(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=64, unique=True)
-    last_name = models.CharField(max_length=64, unique=True)
+    first_name = models.CharField(max_length=200, unique=True)
+    last_name = models.CharField(max_length=200, unique=True)
     SEX = (('M', 'MALE'), ('F', 'FEMALE'))
     gender = models.CharField(max_length=8, choices=SEX)
     avatar_url = models.CharField(max_length=200, null=True)
@@ -32,7 +32,7 @@ class Receptionist(models.Model):
 class Room(models.Model):
     room_type_id = models.ForeignKey('RoomType', on_delete=models.CASCADE)
     room_status_id = models.ForeignKey('RoomStatus', on_delete=models.CASCADE)
-    room_no = models.CharField(max_length=64, unique=True)
+    room_no = models.CharField(max_length=200, unique=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     
@@ -41,7 +41,7 @@ class Room(models.Model):
             is currently {self.room_status_id.status.upper()}.'''
 
 class RoomStatus(models.Model):
-    status = models.CharField(max_length=64, unique=True)
+    status = models.CharField(max_length=200, unique=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     
@@ -49,8 +49,8 @@ class RoomStatus(models.Model):
         return f"Room_status: {self.status}"
 
 class RoomType(models.Model):
-    room_type = models.CharField(max_length=64, unique=True)
-    price = models.CharField(max_length=64)
+    room_type = models.CharField(max_length=200, unique=True)
+    price = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     
@@ -81,7 +81,7 @@ class Payment(models.Model):
 
 
 class PaymentType(models.Model):
-    name = models.CharField(max_length=64, unique=True)
+    name = models.CharField(max_length=200, unique=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
 
@@ -93,10 +93,11 @@ class Reservation(models.Model):
     payment_type_id = models.ForeignKey(PaymentType, on_delete=models.CASCADE)
     customer_id = models.ForeignKey(User, on_delete=models.CASCADE)
     staff_id = models.ForeignKey(Receptionist, on_delete=models.CASCADE)
-    start_time = models.TimeField( auto_now=False, auto_now_add=False)
-    end_time = models.TimeField(auto_now=False, auto_now_add=False)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     
     def __str__(self):
-        return f"Reservation: {self.customer_id.username.title()} booked Room: {self.room_id.room_no}."
+        return f'''Reservation: {self.customer_id.username.title()} booked Room: {self.room_id.room_no}
+            from {self.start_time} to {self.end_time}.'''
