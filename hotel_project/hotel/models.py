@@ -57,19 +57,17 @@ class RoomType(models.Model):
     def __str__(self):
         return f"Room_type : {self.room_type}, price: {self.price}"
 
-class Booking(models.Model): 
-    room_id = models.ForeignKey(Room, on_delete=models.CASCADE)
-    customer_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    staff_id = models.ForeignKey(Receptionist, on_delete=models.CASCADE)
-    payment_id = models.ForeignKey('Payment' , on_delete=models.CASCADE)
+
+class PaymentType(models.Model):
+    name = models.CharField(max_length=200, unique=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
-    
+
     def __str__(self):
-        return f"Booking by {self.customer_id.username.title()} paid for Room {self.room_id.room_no}."
+        return  f"Payment option: {self.name}"
 
 class Payment(models.Model):
-    payment_type_id = models.ForeignKey('PaymentType', on_delete=models.CASCADE)
+    payment_type_id = models.ForeignKey(PaymentType, on_delete=models.CASCADE)
     customer_id = models.ForeignKey(User, on_delete=models.CASCADE)
     staff_id = models.ForeignKey(Receptionist, on_delete=models.CASCADE)
     amount = models.CharField(max_length=10)
@@ -79,14 +77,18 @@ class Payment(models.Model):
     def __str__(self):
         return f"{self.customer_id} paid #{self.amount} processed by {self.staff_id}."
 
-
-class PaymentType(models.Model):
-    name = models.CharField(max_length=200, unique=True)
+class Booking(models.Model): 
+    room_id = models.ForeignKey(Room, on_delete=models.CASCADE)
+    customer_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    staff_id = models.ForeignKey(Receptionist, on_delete=models.CASCADE)
+    payment_id = models.ForeignKey(Payment, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
-
+    
     def __str__(self):
-        return  f"Payment option: {self.name}"
+        return f"Booking by {self.customer_id.username.title()} paid for Room {self.room_id.room_no}."
+
+
     
 class Reservation(models.Model):
     room_id = models.ForeignKey(Room, on_delete=models.CASCADE)

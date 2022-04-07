@@ -1,37 +1,44 @@
+from django.http import HttpResponse
 from django import forms
-
-
-class DatePickerInput(forms.DateInput):
-    input_type = 'date'
-
-class TimePickerInput(forms.TimeInput):
-    input_type = 'time'
+from .models import User, Receptionist, Room, RoomStatus, RoomType, Booking, Payment, PaymentType, Reservation
 
 class BookingForm(forms.Form):
-    widget_time = TimePickerInput(attrs={
-            'class': 'form-control datetimepicker-input',
+    widget_select = forms.Select(attrs={
+            'class': 'form-control',
             'style': 'max-width: 300px',
-            'data-target': '#datetimepicker1'
         })
     
-    widget_date = DatePickerInput(attrs={
-            'class': 'form-control datetimepicker-input',
+    widget = forms.TextInput(attrs={
+            'class': 'form-control',
+            'type': 'text',
             'style': 'max-width: 300px',
-            'data-target': '#datetimepicker1'
         })
     
-    ROOM_TYPES = (
-        ('SINGLE', 'SINGLE'),
-        ('DOUBLE', 'DOUBLE'),
-        ('KING', 'KING'),
-        ('VIP', 'VIP'),
-        ('PRESIDENTIAL', 'PRESIDENTIAL'),
-    )
-    room_type = forms.ChoiceField(choices=ROOM_TYPES, required=True)
-    customer_id = forms.IntegerField(required=True)
-    payment_id = forms.IntegerField(required=True)
-    start_date = forms.DateField(widget=widget_date, required=True)
-    start_time = forms.TimeField(widget=widget_time, required=True)
-    end_date = forms.DateField(widget=widget_date, required=True)
-    end_time = forms.TimeField(widget=widget_time, required=True)
+    widget2 = forms.DateTimeInput(attrs={
+            'class': 'form-control',
+            'type': 'datetime-local',
+            'style': 'max-width: 300px',
+        })
+
+    #RoomTypes
+    options =  RoomType.objects.all() 
+    ROOM_TYPES = []
+    for option in options:
+        ROOM_TYPES.append((option.room_type,option.room_type)) 
+    ROOM_TYPES = tuple(ROOM_TYPES)
+    
+    #RoomTypes
+    options =  User.objects.filter(is_admin=False, is_superadmin=False, is_staff=False) 
+    USERS = []
+    for option in options:
+        USERS.append((option.username,f"{option.pk}-{option.username.title()}")) 
+    USERS = tuple(USERS)
+    
+    room_type = forms.ChoiceField(widget=widget_select, choices=ROOM_TYPES, required=True)
+    customer_id = forms.ChoiceField(widget=widget_select,choices=USERS, required=True)
+    staff_id = forms.IntegerField(widget=widget, required=True)
+    payment_id = forms.IntegerField(widget=widget, required=True)
+    start_date = forms.DateTimeField(widget=widget2, required=True)
+    end_date = forms.DateTimeField(widget=widget2, required=True)
+
 

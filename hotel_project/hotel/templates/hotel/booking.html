@@ -11,8 +11,8 @@
 
 {% block main %}
     <form action="" method="POST">
-        {{form.as_p}}
         {% csrf_token %}
+        {{form.as_p}}
         <button type="submit" class="btn btn-success">Book Room</button>
     </form>    
 {% endblock main %}
