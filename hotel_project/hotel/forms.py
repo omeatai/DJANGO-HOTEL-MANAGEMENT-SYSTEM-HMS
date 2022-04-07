@@ -27,15 +27,15 @@ class BookingForm(forms.Form):
         ROOM_TYPES.append((option.room_type,option.room_type)) 
     ROOM_TYPES = tuple(ROOM_TYPES)
     
-    #RoomTypes
-    options =  User.objects.filter(is_admin=False, is_superadmin=False, is_staff=False) 
-    USERS = []
-    for option in options:
-        USERS.append((option.username,f"{option.pk}-{option.username.title()}")) 
-    USERS = tuple(USERS)
+    #CustomerId
+    # options =  User.objects.filter(is_admin=False, is_superadmin=False, is_staff=False) 
+    # USERS = []
+    # for option in options:
+    #     USERS.append((option.username,f"{option.pk}-{option.username.title()}")) 
+    # USERS = tuple(USERS)
     
     room_type = forms.ChoiceField(widget=widget_select, choices=ROOM_TYPES, required=True)
-    customer_id = forms.ChoiceField(widget=widget_select,choices=USERS, required=True)
+    customer_id = forms.IntegerField(widget=widget, required=True)
     staff_id = forms.IntegerField(widget=widget, required=True)
     payment_id = forms.IntegerField(widget=widget, required=True)
     start_date = forms.DateTimeField(widget=widget2, required=True)
