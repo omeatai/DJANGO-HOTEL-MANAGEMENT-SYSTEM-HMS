@@ -22,9 +22,7 @@ class BookingForm(forms.Form):
 
     #RoomTypes
     options =  RoomType.objects.all() 
-    ROOM_TYPES = []
-    for option in options:
-        ROOM_TYPES.append((option.room_type,option.room_type)) 
+    ROOM_TYPES = [(option.room_type,option.room_type) for option in options]
     ROOM_TYPES = tuple(ROOM_TYPES)
     
     #CustomerId
